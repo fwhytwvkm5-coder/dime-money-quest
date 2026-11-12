@@ -315,6 +315,12 @@ def frame(t):
     if t > DUR - 0.2: out = Image.blend(out, Image.new("RGB", (LW, LH), INK), prog(t, DUR - 0.2, DUR) * 0.6)
     return out.resize((W, H), Image.NEAREST)
 
+# cover image: python3 <episode>.py <mode> cover  -> *_cover.png (1080x1920, title area inside the 3:4 grid crop)
+COVER_T = 0.47
+if len(sys.argv) > 2 and sys.argv[2] == "cover":
+    frame(COVER_T).save(OUT.replace("_silent.mp4", "_cover.png"))
+    sys.exit(0)
+
 proc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
                          "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-c:v", "libx264",
                          "-preset", "veryfast", "-crf", "16", "-pix_fmt", "yuv420p", OUT], stdin=subprocess.PIPE)

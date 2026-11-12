@@ -135,11 +135,6 @@ def frame(t):
         d.rectangle([tx, GROUND_Y + 7, tx + 11, LH], fill=(120, 74, 44)); d.point((tx + 3, GROUND_Y + 11), fill=(150, 100, 60))
 
     bx, by0 = draw_bag(d, t)
-    # boss nameplate + HP
-    hp = 1.0 - 0.5 * ease_out(prog(t, T_WHACK, T_WHACK + 0.5))
-    text(d, "SUBSCRIPTIONS", bx, by0 - 22, RED, center=True)
-    d.rectangle([bx - 34, by0 - 11, bx + 34, by0 - 7], fill=INK)
-    d.rectangle([bx - 33, by0 - 10, bx - 33 + int(66 * hp), by0 - 8], fill=RED)
 
     # coins knocked out of Dime on each hit
     for i, h in enumerate(HITS):
@@ -196,6 +191,11 @@ def frame(t):
     im.paste(spr, (fx - 60, fy - 180), spr)
     d = ImageDraw.Draw(im); d.fontmode = "1"
     hx = fx + (gx - fx) * 2; hcy = fy - (fy - ghcy) * 2
+    # boss nameplate + HP
+    hp = 1.0 - 0.5 * ease_out(prog(t, T_WHACK, T_WHACK + 0.5))
+    text(d, "SUBSCRIPTIONS", bx, by0 - 22, RED, center=True)
+    d.rectangle([bx - 34, by0 - 11, bx + 34, by0 - 7], fill=INK)
+    d.rectangle([bx - 33, by0 - 10, bx - 33 + int(66 * hp), by0 - 8], fill=RED)
 
     # damage numbers, combo, KO
     for i, h in enumerate(HITS):
@@ -337,6 +337,12 @@ def frame(t):
     if 0 <= t - T_WHACK < 0.06: out = Image.blend(out, Image.new("RGB", (LW, LH), WHITE), 0.5)
     if t > DUR - 0.2: out = Image.blend(out, Image.new("RGB", (LW, LH), INK), prog(t, DUR - 0.2, DUR) * 0.6)
     return out.resize((W, H), Image.NEAREST)
+
+# cover image: python3 <episode>.py <mode> cover  -> *_cover.png (1080x1920, title area inside the 3:4 grid crop)
+COVER_T = 0.47
+if len(sys.argv) > 2 and sys.argv[2] == "cover":
+    frame(COVER_T).save(OUT.replace("_silent.mp4", "_cover.png"))
+    sys.exit(0)
 
 proc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
                          "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-c:v", "libx264",

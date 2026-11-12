@@ -33,6 +33,9 @@ End-card modes in the template: `more` = "Follow for more tips", `follow` = "Fol
 - Weeks 3–4 (Build): World 2, €19 Money Quest sheet live, "Comment SCAN" + link in bio.
 - Week 5+ (Storyline): Season 1 "Dime vs. the debt bosses", end card "Follow for part 2"; every 4th episode still "Comment SCAN".
 
+## Cover image
+Every video gets a cover: `python3 <episode>.py <mode> cover` saves `*_cover.png` (1080x1920) from the attack moment: headline, Dime shocked (not red-tinted), enemy visible. Headline and characters must sit inside the middle 3:4 area (the profile-grid crop). Quick formats get a cover with their question or hook as the headline.
+
 ## Sound
 Every episode uses `studio/sound.py` (`episode_audio`): battle music under the attack, sad half-time during the damage, riser into the power-up, victory theme, level-complete jingle on the end card, plus punches, coin scatters, combo, womp, item-get, weapon hit (`bonk` or `snip`, add new ones there), cash register, typing blips. Keep it busy and punchy.
 
