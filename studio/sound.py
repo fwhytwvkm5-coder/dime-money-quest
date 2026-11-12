@@ -4,7 +4,7 @@ episode_audio(...) writes a mono 44.1 kHz WAV that follows the episode beats:
 battle music under the attack, a sad half-time loop during the damage, a riser into
 the power-up, a victory theme after the counterattack and a level-complete jingle
 on the end card. Effects: title slams, punches, coin scatters, combo, damage womp,
-item-get, weapon hit (bonk or snip), cash register, coin returns, typewriter blips.
+item-get, weapon hit (bonk, snip, ping or swat), cash register, coin returns, typewriter blips.
 """
 import math, wave
 import numpy as np
@@ -90,6 +90,14 @@ def shimmer(dur=0.8, vol=0.05):
 def bonk(vol=0.6): return M(punch(vol), sine(900, 0.3, vol * 0.4, 9, slide=500))
 def snip(vol=0.5):
     return M(noise(0.06, vol * 0.8, 50, hp=True), sine(2600, 0.35, vol * 0.35, 10), sine(3900, 0.25, vol * 0.2, 14), np.pad(noise(0.05, vol * 0.6, 60, hp=True), (int(0.08 * SR), 0)))
+def ping(vol=0.5):
+    """magnifying-glass scan: a radar ping that sweeps up, plus a 'found it' double beep"""
+    return M(sine(700, 0.4, vol * 0.45, 5, slide=1800), sq(1320, 0.06, vol * 0.12, 0.25, 20),
+             np.pad(sq(1760, 0.08, vol * 0.14, 0.25, 15), (int(0.09 * SR), 0)), punch(vol * 0.6))
+def swat(vol=0.6):
+    """rolled-up map smack: paper whoosh into a heavy thud"""
+    return M(np.pad(punch(vol), (int(0.07 * SR), 0)), sweep(0.12, vol * 0.5, up=True), sine(220, 0.25, vol * 0.3, 12, slide=90))
+WEAPONS = {"bonk": None, "snip": None, "ping": ping, "swat": swat}
 def register(vol=0.25):
     return M(np.pad(M(sine(1568, 0.6, vol, 5), sine(2093, 0.6, vol * 0.7, 6)), (int(0.05 * SR), 0)), noise(0.04, vol, 60))
 def level_up(vol=0.1):
@@ -161,7 +169,7 @@ def episode_audio(path, DUR, HITS, T_BOX, T_GRAB, T_WHACK, T_PAY, T_CTA, DIALOG,
     _add(sfx, 3.8, womp()); _add(sfx, 3.8, kick(0.5))
     _add(sfx, T_BOX + 0.5, punch(0.3)); _add(sfx, T_BOX + 0.5, shimmer(0.6, 0.035))
     _add(sfx, T_GRAB, item_get()); _add(sfx, T_GRAB, shimmer(0.9, 0.04))
-    _add(sfx, T_WHACK, snip() if weapon == "snip" else bonk()); _add(sfx, T_WHACK, kick(0.6))
+    _add(sfx, T_WHACK, snip() if weapon == "snip" else (WEAPONS[weapon]() if WEAPONS.get(weapon) else bonk())); _add(sfx, T_WHACK, kick(0.6))
     for k in range(10): _add(sfx, T_WHACK + 0.2 + k * 0.07, coin(0.08, 1.0 + 0.04 * k))
     _add(sfx, T_PAY + 0.2, register())
     _add(sfx, T_CTA, sweep(0.35, 0.2, up=False)); _add(sfx, T_CTA + 0.3, level_up())
@@ -179,6 +187,64 @@ def episode_audio(path, DUR, HITS, T_BOX, T_GRAB, T_WHACK, T_PAY, T_CTA, DIALOG,
     mix /= max(1e-6, np.max(np.abs(mix))) / 0.89
     if DUR > 0.3:  # short fade at the very end so the loop restarts cleanly
         f = int(0.2 * SR); mix[-f:] *= np.linspace(1, 0, f)
+    with wave.open(path, "wb") as wf:
+        wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(SR)
+        wf.writeframes((mix * 32767).astype(np.int16).tobytes())
+
+
+# ---------- quick formats (quiz, 10-second tip, want-or-need, Dime reacts) ----------
+def tick(vol=0.12): return M(sq(1200, 0.03, vol, 0.5, 60), noise(0.02, vol * 0.5, 120, hp=True))
+def ding(vol=0.12):
+    return np.concatenate([sq(note("E6"), 0.08, vol, 0.25, 6), sq(note("A6"), 0.4, vol, 0.25, 5)])
+def buzz(vol=0.1): return M(sq(110, 0.35, vol, 0.5, 4), sq(116, 0.35, vol, 0.5, 4))
+def stamp(vol=0.5): return M(punch(vol), noise(0.08, vol * 0.5, 40), sine(70, 0.2, vol * 0.5, 14))
+def poof(vol=0.25): return M(sweep(0.3, vol, up=False), noise(0.15, vol * 0.4, 20))
+def jump(vol=0.07): return sq(300, 0.18, vol, 0.25, 6, slide=750)
+
+QUICK_FX = {
+    "punch": lambda: M(punch(0.55), kick(0.5)), "coin": lambda: coin(0.09),
+    "coins": lambda: np.concatenate([np.pad(coin(0.07, 1.0 + 0.05 * k), (int(0.06 * k * SR), 0)) for k in range(1)]),
+    "slam": lambda: slam(0.28), "womp": lambda: M(womp(), kick(0.5)), "item": lambda: M(item_get(), shimmer(0.9, 0.04)),
+    "register": register, "tick": tick, "ding": lambda: M(ding(), shimmer(0.6, 0.04)), "buzz": buzz, "stamp": stamp,
+    "poof": poof, "levelup": lambda: M(sweep(0.35, 0.2, up=False), np.pad(level_up(), (int(0.3 * SR), 0))),
+    "jump": jump, "bonk": bonk, "snip": snip, "ping": ping, "swat": swat,
+    "riser": lambda: M(sweep(0.8, 0.22, up=True), *[np.pad(sq(note("C4") * 2 ** (k / 4), 0.08, 0.05, 0.25, 6), (int(k * 0.1 * SR), 0)) for k in range(8)]),
+}
+
+def quick_audio(path, DUR, T_CTA, EVENTS, DIALOG, music="quiz"):
+    """EVENTS: list of (time, effect name from QUICK_FX); 'coinrain' adds 8 rising coins."""
+    n = int(SR * DUR)
+    mus = np.zeros(n); sfx = np.zeros(n)
+    if music == "quiz":      # tense-bouncy thinking loop, then bright after the reveal (first 'ding')
+        reveal = next((t for t, e in EVENTS if e == "ding"), T_CTA)
+        pattern(mus, 0.0, reveal, 150, ["D3", None, "D3", None, "F3", None, "D3", "C3"],
+                ["A4", None, "D5", None, "A4", None, "F5", "E5"], drums="soft", vol=0.9)
+        pattern(mus, reveal + 0.2, T_CTA, 164, ["C3", "C3", "G2", "C3", "F2", "F2", "G2", "G2"],
+                ["E5", "G5", "C6", "G5", "A5", "G5", "E5", "G5"], vol=0.9)
+    else:                    # 'battle': same A-minor drive as the boss fights, victory after the first 'item'
+        win = next((t for t, e in EVENTS if e in ("item",)), T_CTA)
+        pattern(mus, 0.0, win, 164, ["A2", "A2", "A2", "C3", "A2", "A2", "G2", "E2"],
+                ["A4", "C5", "E5", "A5", "E5", "C5", "B4", "C5", "A4", "C5", "E5", "G5", "F5", "E5", "D5", "E5"])
+        pattern(mus, win + 0.3, T_CTA, 164, ["C3", "C3", "G2", "C3", "F2", "F2", "G2", "G2"],
+                ["E5", "G5", "C6", "G5", "A5", "G5", "E5", "G5", "F5", "A5", "C6", "A5", "G5", "B5", "D6", "B5"])
+    pattern(mus, T_CTA + 0.9, DUR, 164, ["C3", None, "G2", None], [None, "E5", None, "G5", None, "C6", None, "G5"], drums="hats", vol=0.7)
+    duck = np.ones(n)
+    for t0, e in EVENTS:
+        if e == "coinrain":
+            for k in range(8): _add(sfx, t0 + k * 0.07, coin(0.08, 1.0 + 0.05 * k))
+        else:
+            _add(sfx, t0, QUICK_FX[e]())
+        if e in ("punch", "stamp", "womp", "ding", "buzz", "bonk", "snip", "ping", "swat", "register"):
+            i = int(t0 * SR); m = int(0.35 * SR)
+            if i < n: duck[i:i + m] = np.minimum(duck[i:i + m], np.linspace(0.45, 1.0, min(m, n - i)))
+    _add(sfx, T_CTA, QUICK_FX["levelup"]())
+    for t0, msg in DIALOG:
+        for k, ch in enumerate(msg):
+            if ch != " " and k % 3 == 0: _add(sfx, t0 + k / 34, blip())
+    mix = mus * 0.55 * duck + sfx * 0.9
+    mix = np.tanh(mix * 1.4) / np.tanh(1.4)
+    mix /= max(1e-6, np.max(np.abs(mix))) / 0.89
+    f = int(0.2 * SR); mix[-f:] *= np.linspace(1, 0, f)
     with wave.open(path, "wb") as wf:
         wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(SR)
         wf.writeframes((mix * 32767).astype(np.int16).tobytes())
