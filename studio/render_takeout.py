@@ -255,6 +255,19 @@ def frame(t):
                     d.polygon([(136, 264), (144, 264), (136, 271)], fill=WHITE)
                     for k in range(3): d.rectangle([138 + k * 9, 253, 140 + k * 9, 255], fill=INK)
                     d.polygon([(124, 248), (124, 260), (116, 254)], fill=GOLD)
+            elif CTA_MODE == "more":
+                text(d, "FOLLOW", 90, 58, WHITE, font=FONT_BIG, center=True)
+                if t > T_CTA + 0.3:
+                    text(d, "FOR MORE", 90, 84, GOLD if int(t * 4) % 2 else (255, 240, 140), font=FONT_BIG, center=True)
+                    text(d, "TIPS", 90, 106, GOLD if int(t * 4) % 2 else (255, 240, 140), font=FONT_BIG, center=True)
+                if t > T_CTA + 0.6:
+                    text(d, "NEW LEVEL", 90, 136, (150, 255, 180), center=True)
+                    text(d, "EVERY DAY", 90, 148, (150, 255, 180), center=True)
+                bx0 = 142 + int(math.sin(t * 6) * 2)
+                d.rectangle([bx0 - 30, 200, bx0 + 30, 220], fill=INK)
+                d.rectangle([bx0 - 29, 201, bx0 + 29, 219], fill=(90, 110, 230))
+                d.rectangle([bx0 - 29, 201, bx0 + 29, 202], fill=(160, 175, 255))
+                text(d, "+FOLLOW", bx0 - 26, 207, WHITE, shadow=False)
             else:
                 text(d, "FOLLOW", 90, 58, WHITE, font=FONT_BIG, center=True)
                 if t > T_CTA + 0.3:
@@ -313,47 +326,9 @@ for i in range(N):
 proc.stdin.close(); proc.wait()
 
 # ---------- audio ----------
-SR = 44100
-audio = np.zeros(int(SR * DUR))
-def add(t0, sig):
-    i = int(t0 * SR); n = min(len(sig), len(audio) - i)
-    if n > 0: audio[i:i + n] += sig[:n]
-def sqw(freq, dur, vol=0.1, duty=0.5, decay=0.0):
-    tt = np.arange(int(SR * dur)) / SR
-    f = np.atleast_1d(freq)
-    ph = (tt * f[0]) % 1.0 if f.size == 1 else np.cumsum(np.interp(np.linspace(0, 1, len(tt)), np.linspace(0, 1, f.size), f)) / SR % 1.0
-    return vol * np.where(ph < duty, 1.0, -1.0) * np.exp(-decay * tt)
-def noise(dur, vol, decay):
-    n = int(SR * dur); rng = np.random.default_rng(int(dur * 1000))
-    return vol * rng.uniform(-1, 1, n) * np.exp(-decay * np.arange(n) / SR)
-coin = lambda: np.concatenate([sqw(988, 0.06, 0.07), sqw(1319, 0.16, 0.07, decay=10)])
-hit = lambda: noise(0.15, 0.35, 30) + sqw(np.array([220, 70]), 0.15, 0.12, 0.5, 12)
-beat = 60 / 140
-def loop(t0, t1, notes, root, vol=0.045):
-    tm = t0; k = 0
-    while tm < t1:
-        add(tm, sqw(root, beat * 0.4, vol, 0.5, 4))
-        add(tm + beat / 2, sqw(notes[k % len(notes)], beat * 0.22, vol * 0.45, 0.25, 8))
-        tm += beat; k += 1
-loop(0.0, 3.6, [311, 294, 311, 370], 98, 0.05)          # tense battle loop
-loop(3.6, T_GRAB, [440, 415, 392, 370], 110)           # sad
-loop(T_WHACK, DUR - 0.3, [659, 784, 1046, 784], 165)   # victory
-for h in HITS:
-    add(h, hit())
-    for k in range(4): add(h + 0.05 + k * 0.04, sqw(np.array([900, 400]), 0.08, 0.04, 0.25, 12))
-add(3.8, sqw(np.array([392, 196]), 0.7, 0.07, 0.5, 2))
-add(T_BOX + 0.5, sqw(np.array([500, 900]), 0.12, 0.05, 0.5, 8))
-add(T_GRAB - 0.45, sqw(np.array([300, 800]), 0.2, 0.06, 0.25, 6))
-for k, f in enumerate([523, 659, 784, 1046]): add(T_GRAB + k * 0.06, sqw(f, 0.1, 0.05, 0.25, 8))
-add(T_WHACK, noise(0.25, 0.3, 40) + sqw(np.array([1200, 600]), 0.25, 0.1, 0.5, 6))
-for k in range(10): add(T_WHACK + 0.2 + k * 0.07, coin())
-for (t0, msg) in DIALOG:
-    for k, ch in enumerate(msg):
-        if ch != " " and k % 2 == 0: add(t0 + k / 34, sqw(1600, 0.02, 0.015, 0.5, 60))
-audio = np.clip(audio, -0.95, 0.95)
-with wave.open("/home/claude/dime-money-quest/studio/takeout_sfx.wav", "wb") as wf:
-    wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(SR)
-    wf.writeframes((audio * 32767).astype(np.int16).tobytes())
+sys.path.insert(0, "/home/claude/dime-money-quest/studio")
+from sound import episode_audio
+episode_audio("/home/claude/dime-money-quest/studio/takeout_sfx.wav", DUR, HITS, T_BOX, T_GRAB, T_WHACK, T_PAY, T_CTA, DIALOG, weapon="bonk")
 subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", OUT, "-i", "/home/claude/dime-money-quest/studio/takeout_sfx.wav",
                 "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-shortest", "/home/claude/dime-money-quest/studio/ep4_takeout_attack.mp4"])
 print("done")

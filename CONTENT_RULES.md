@@ -27,11 +27,16 @@ No specific investment recommendations; concepts only. Every on-screen amount ca
 Plus: every math line adds up; no real brands or logos; no text cut off at the frame edge; attack visible on frame 0.
 
 ## Phases and end cards
-- Weeks 1–2 (Launch): World 1, end card "Comment SCAN" → free Leak Scanner.
+End-card modes in the template: `more` = "Follow for more tips", `follow` = "Follow for part 2" (teases the next enemy), `comment` = "Comment SCAN".
+- Default until the user says otherwise: `more`. Check content/status.md every run.
+- Weeks 1–2 (Launch): World 1; "Comment SCAN" only once the free Leak Scanner is live.
 - Weeks 3–4 (Build): World 2, €19 Money Quest sheet live, "Comment SCAN" + link in bio.
 - Week 5+ (Storyline): Season 1 "Dime vs. the debt bosses", end card "Follow for part 2"; every 4th episode still "Comment SCAN".
 
-## Roles (one weekly run)
+## Sound
+Every episode uses `studio/sound.py` (`episode_audio`): battle music under the attack, sad half-time during the damage, riser into the power-up, victory theme, level-complete jingle on the end card, plus punches, coin scatters, combo, womp, item-get, weapon hit (`bonk` or `snip`, add new ones there), cash register, typing blips. Keep it busy and punchy.
+
+## Roles (one daily run)
 1. **Director:** picks next week's 35 topics from the plan, analytics and enemy roster; writes scripts with exact numbers; tags each video.
 2. **Animator:** renders every script with the studio engine.
 3. **Reviewer:** independent check against the four checks and the rules above; looks at frame 0, the payoff frame and the end card.
