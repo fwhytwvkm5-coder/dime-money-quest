@@ -5,9 +5,9 @@ English-speaking 18–28-year-olds with their first real income. Money explained
 No specific investment recommendations; concepts only. Every on-screen amount carries "EXAMPLE NUMBERS".
 
 ## Volume
-5 new videos per day: 2 boss fights (17–20 s) + 3 quick formats (8–12 s: quiz, 10-second tip, want-or-need, Dime reacts).
-- TikTok: all 5 · Instagram: best 3 (both boss fights + 1 quick) · YouTube Shorts: 2
-- Slots (German time): 18:00 main series, 00:30 standalone. Re-check against insights after 14 days.
+3 new videos per day (user's decision, 2026-11-12): 2 boss fights (17–20 s) + 1 quick format (8–12 s: quiz, 10-second tip, want-or-need, Dime reacts). Never produce more than gets posted.
+- Instagram only for now: all 3. Saved quick formats (log.csv date "tbd") are used up first before making new ones.
+- Slots (German time): boss fights 18:00 and 21:00, quick format 00:30 the following night (US evening). Re-check against insights after 14 days.
 
 ## Boss-fight template
 | Time | Beat |
