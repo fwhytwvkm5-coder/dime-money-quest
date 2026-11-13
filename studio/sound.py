@@ -4,7 +4,7 @@ episode_audio(...) writes a mono 44.1 kHz WAV that follows the episode beats:
 battle music under the attack, a sad half-time loop during the damage, a riser into
 the power-up, a victory theme after the counterattack and a level-complete jingle
 on the end card. Effects: title slams, punches, coin scatters, combo, damage womp,
-item-get, weapon hit (bonk, snip, ping or swat), cash register, coin returns, typewriter blips.
+item-get, weapon hit (bonk, snip, ping, swat, ring or block), cash register, coin returns, typewriter blips.
 """
 import math, wave
 import numpy as np
@@ -97,7 +97,17 @@ def ping(vol=0.5):
 def swat(vol=0.6):
     """rolled-up map smack: paper whoosh into a heavy thud"""
     return M(np.pad(punch(vol), (int(0.07 * SR), 0)), sweep(0.12, vol * 0.5, up=True), sine(220, 0.25, vol * 0.3, 12, slide=90))
-WEAPONS = {"bonk": None, "snip": None, "ping": ping, "swat": swat}
+def ring(vol=0.5):
+    """alarm-clock reminder: fast bell trill over a punchy hit"""
+    out = np.zeros(int(0.6 * SR))
+    for k in range(14):
+        b = M(sine(2350 if k % 2 else 2650, 0.05, vol * 0.22, 30), sq(1175 if k % 2 else 1325, 0.04, vol * 0.05, 0.25, 40))
+        i = int(k * 0.04 * SR); out[i:i + len(b)] += b[:len(out) - i]
+    return M(out, punch(vol * 0.6))
+def block(vol=0.6):
+    """shield block: metallic clang with a ringing tail"""
+    return M(punch(vol * 0.8), sine(1480, 0.5, vol * 0.25, 7), sine(2210, 0.4, vol * 0.18, 9), sq(740, 0.08, vol * 0.12, 0.5, 25), noise(0.05, vol * 0.5, 70, hp=True))
+WEAPONS = {"bonk": None, "snip": None, "ping": ping, "swat": swat, "ring": ring, "block": block}
 def register(vol=0.25):
     return M(np.pad(M(sine(1568, 0.6, vol, 5), sine(2093, 0.6, vol * 0.7, 6)), (int(0.05 * SR), 0)), noise(0.04, vol, 60))
 def level_up(vol=0.1):
@@ -207,7 +217,7 @@ QUICK_FX = {
     "slam": lambda: slam(0.28), "womp": lambda: M(womp(), kick(0.5)), "item": lambda: M(item_get(), shimmer(0.9, 0.04)),
     "register": register, "tick": tick, "ding": lambda: M(ding(), shimmer(0.6, 0.04)), "buzz": buzz, "stamp": stamp,
     "poof": poof, "levelup": lambda: M(sweep(0.35, 0.2, up=False), np.pad(level_up(), (int(0.3 * SR), 0))),
-    "jump": jump, "bonk": bonk, "snip": snip, "ping": ping, "swat": swat,
+    "jump": jump, "bonk": bonk, "snip": snip, "ping": ping, "swat": swat, "ring": ring, "block": block,
     "riser": lambda: M(sweep(0.8, 0.22, up=True), *[np.pad(sq(note("C4") * 2 ** (k / 4), 0.08, 0.05, 0.25, 6), (int(k * 0.1 * SR), 0)) for k in range(8)]),
 }
 
