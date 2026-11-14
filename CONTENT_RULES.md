@@ -45,13 +45,13 @@ Rules: slide 1 = hook + "SWIPE"; "EXAMPLE NUMBERS" on every slide that shows an 
 1. **Stands alone:** someone who never saw the page understands it. One full loop: problem, damage, tip, payoff. No "as you know from part 1".
 2. **Useful today:** one concrete action the viewer can take within 24 hours.
 3. **Reason to follow:** an open loop at the end (next enemy silhouette, "Boss 3 of 5", Dime's progress).
-4. **Natural product link:** Dime uses the product's tool on screen; only every 4th video asks directly.
+4. **Natural product link:** Dime uses the product's tool on screen; every reel ends with "Comment SCAN" (user's decision 2026-11-14, see content/status.md).
 
 Plus: every math line adds up; no real brands or logos; no text cut off at the frame edge; attack visible on frame 0.
 
 ## Phases and end cards
 End-card modes in the template: `more` = "Follow for more tips", `follow` = "Follow for part 2" (teases the next enemy), `comment` = "Comment SCAN".
-- Default until the user says otherwise: `more`. Check content/status.md every run.
+- Current end cards: see content/status.md (since 2026-11-14: reels `comment`, carousels `more`). Check it every run. Captions of reels say "Comment SCAN for the free Leak Scanner".
 - Weeks 1–2 (Launch): World 1; "Comment SCAN" only once the free Leak Scanner is live.
 - Weeks 3–4 (Build): World 2, €19 Money Quest sheet live, "Comment SCAN" + link in bio.
 - Week 5+ (Storyline): Season 1 "Dime vs. the debt bosses", end card "Follow for part 2"; every 4th episode still "Comment SCAN".

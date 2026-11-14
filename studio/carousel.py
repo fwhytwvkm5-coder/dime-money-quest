@@ -22,7 +22,7 @@ CW, CH, CS = 180, 225, 6           # low-res canvas, scaled 6x -> 1080x1350
 MINT = (150, 255, 180); GREY = (200, 200, 215); PANEL = (40, 32, 62)
 CTA_MODE = sys.argv[1] if len(sys.argv) > 1 else "more"
 if CTA_MODE == "comment":
-    raise SystemExit("Comment SCAN end card is off until content/status.md says the Leak Scanner is live")
+    raise SystemExit("Carousels end with Save this + Follow for more tips (mode more); Comment SCAN is for reels only, see content/status.md")
 
 _STARS = [((k * 37) % CW, (k * 53) % CH) for k in range(40)]
 

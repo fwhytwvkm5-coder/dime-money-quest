@@ -19,8 +19,6 @@ exec(src)
 
 CTA_MODE = sys.argv[1] if len(sys.argv) > 1 else "more"
 COVER = len(sys.argv) > 2 and sys.argv[2] == "cover"     # covers never show a half-typed dialog box
-if CTA_MODE == "comment":
-    raise SystemExit("Comment SCAN end card is off until content/status.md says the Leak Scanner is live")
 
 
 def scene(t, sky=5, sun=True):
@@ -133,6 +131,27 @@ def end_card(im, t, T_CTA, tease=None):
     im.paste(hl, (-6, 150 - bounce), hl)
     d = ImageDraw.Draw(im); d.fontmode = "1"
     blink = GOLD if int(t * 4) % 2 else (255, 240, 140)
+    if CTA_MODE == "comment":   # Comment SCAN -> free Leak Scanner (ManyChat DM), same card as the boss fights
+        text(d, "COMMENT", 90, 58, WHITE, font=FONT_BIG, center=True)
+        if t > T_CTA + 0.3: text(d, '"SCAN"', 90, 84, blink, font=FONT_BIG, center=True)
+        if t > T_CTA + 0.6:
+            text(d, "TO GET THE FREE", 90, 116, (150, 255, 180), center=True)
+            text(d, "LEAK SCANNER", 90, 128, (150, 255, 180), center=True)
+        ix, iy = 150, 196 - bounce
+        d.rectangle([ix - 15, iy - 19, ix + 15, iy + 19], fill=INK)
+        d.rectangle([ix - 14, iy - 18, ix + 14, iy + 18], fill=WHITE)
+        d.rectangle([ix - 14, iy - 18, ix + 14, iy - 12], fill=GREEN)
+        for k in range(4):
+            d.rectangle([ix - 10, iy - 7 + k * 6, ix + 4 - (k % 2) * 6, iy - 6 + k * 6], fill=(150, 150, 170))
+            d.rectangle([ix + 7, iy - 8 + k * 6, ix + 9, iy - 6 + k * 6], fill=GREEN if k < 3 else RED)
+        if int(t * 3) % 2 or t < T_CTA + 1.0:
+            d.rectangle([128, 244, 168, 264], fill=WHITE)
+            d.polygon([(136, 264), (144, 264), (136, 271)], fill=WHITE)
+            for k in range(3): d.rectangle([138 + k * 9, 253, 140 + k * 9, 255], fill=INK)
+            d.polygon([(124, 248), (124, 260), (116, 254)], fill=GOLD)
+        if t > T_CTA + 1.2 and int(t * 2) % 2:
+            text(d, "@DIMESMONEYQUEST", 90, 292, (200, 200, 220), center=True)
+        return im
     text(d, "FOLLOW", 90, 58, WHITE, font=FONT_BIG, center=True)
     if CTA_MODE == "follow":
         if t > T_CTA + 0.3: text(d, "FOR PART 2", 90, 84, blink, font=FONT_BIG, center=True)

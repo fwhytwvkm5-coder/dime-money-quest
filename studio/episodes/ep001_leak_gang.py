@@ -308,7 +308,7 @@ def frame(t):
                 d.rectangle([bx0 - 29, 201, bx0 + 29, 219], fill=(90, 110, 230))
                 d.rectangle([bx0 - 29, 201, bx0 + 29, 202], fill=(160, 175, 255))
                 text(d, "+FOLLOW", bx0 - 26, 207, WHITE, shadow=False)
-            else:
+            elif CTA_MODE == "follow":
                 text(d, "FOLLOW", 90, 58, WHITE, font=FONT_BIG, center=True)
                 if t > T_CTA + 0.3:
                     text(d, "FOR PART 2", 90, 84, GOLD if int(t * 4) % 2 else (255, 240, 140), font=FONT_BIG, center=True)
