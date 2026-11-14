@@ -11,6 +11,8 @@ bad habits are enemies that hurt Dime, tips are power-ups, savings are the score
 | `studio/render_arcade.py` | Arcade world engine: sky, city, ground, HUD, pixel font, coins, monsters, chiptune helpers |
 | `studio/render_guy.py` | Dime the character (coin head + body, moods: happy, sad, shock, neutral) |
 | `studio/render_takeout.py` | Reference episode: boss-fight template (video 4, Takeout Bag). `python3 render_takeout.py comment` or `follow` picks the end card |
+| `studio/quick.py` | Quick-format engine (8–12 s reels) |
+| `studio/carousel.py` | Carousel engine (1080x1350 slides, same arcade look) |
 | `studio/sound.py` | Chiptune score and sound effects for every episode |
 | `studio/episodes/` | One script per episode, copied from the template |
 | `studio/pfp.py` | Profile picture |

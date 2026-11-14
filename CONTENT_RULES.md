@@ -5,9 +5,32 @@ English-speaking 18–28-year-olds with their first real income. Money explained
 No specific investment recommendations; concepts only. Every on-screen amount carries "EXAMPLE NUMBERS".
 
 ## Volume
-3 new videos per day (user's decision, 2026-11-12): 2 boss fights (17–20 s) + 1 quick format (8–12 s: quiz, 10-second tip, want-or-need, Dime reacts). Never produce more than gets posted.
-- Instagram only for now: all 3. Saved quick formats (log.csv date "tbd") are used up first before making new ones.
-- Slots (German time): boss fights 18:00 and 21:00, quick format 00:30 the following night (US evening). Re-check against insights after 14 days.
+5 posts per day on Instagram (user's decision, 2026-11-14): 4 videos + 1 carousel. Never produce more than gets posted.
+- Videos: 2 boss fights (17–20 s) + 2 quick formats (8–12 s).
+- Carousel: 1 per day, 6–8 slides, 1080x1350 (see "Carousels").
+- Saved items (log.csv date "tbd") are used up first, oldest first, before making new ones of that type.
+- Slots (German time), all on the same calendar day except the last:
+  | Slot | Time | Post |
+  | --- | --- | --- |
+  | D | 12:30 | Carousel |
+  | E | 15:30 | Quick format |
+  | A | 18:00 | Boss fight |
+  | B | 21:00 | Boss fight |
+  | C | 00:30 (the following night = next calendar day) | Quick format (US evening) |
+- Re-check slots and the video/carousel split against insights after 14 days (around 2026-11-28): compare saves + shares per 1,000 reach and follows per 1,000 reach by format.
+
+## Quick formats (rotate; the two quick posts of a day are always different formats, and never the same format as the previous quick post)
+quiz · 10-second tip · want-or-need · Dime reacts · rate-the-purchase (items ranked by rarity, common waste to legendary buy) · speedrun (sort out payday in 60 s with a timer; keep it 8–12 s by showing the 3 key moves) · patch notes (Dime's budget "update log": nerfed X, buffed Y)
+New quick formats use `studio/quick.py`, saved as `studio/episodes/qNNN_<slug>.py`.
+
+## Carousels
+Engine: `studio/carousel.py`; scripts `studio/episodes/cNNN_<slug>.py`; `python3 <script>.py more` writes `studio/<name>_01.png …` and `<name>_cover.png` (= slide 1). Reference: `c001_boss_guide_trial_trap.py`.
+Types (rotate; never the same type two days in a row):
+- **Boss guide:** wiki card for one enemy already posted as a video (stats, how it attacks, damage math, weak spot, loot, today's quest, end card). Cheapest: reuse the boss sprite with `enemy_from()`.
+- **Spot the leak:** a made-up bank statement (no real brand names), viewer finds 3 leaks, answer + math on the last content slide.
+- **7-day quest map:** one small action per day for 7 days, one slide per day.
+- **Want or need, swipe edition:** one item per slide, verdict + rarity.
+Rules: slide 1 = hook + "SWIPE"; "EXAMPLE NUMBERS" on every slide that shows an amount; one concrete action doable within 24 h; last slide = "Save this" + the end card from content/status.md + next-boss open loop; all text inside x 8–172 of the 180-px canvas; the four checks apply to the carousel as a whole.
 
 ## Boss-fight template
 | Time | Beat |
@@ -40,13 +63,13 @@ Every video gets a cover: `python3 <episode>.py <mode> cover` saves `*_cover.png
 Every episode uses `studio/sound.py` (`episode_audio`): battle music under the attack, sad half-time during the damage, riser into the power-up, victory theme, level-complete jingle on the end card, plus punches, coin scatters, combo, womp, item-get, weapon hit (`bonk` or `snip`, add new ones there), cash register, typing blips. Keep it busy and punchy.
 
 ## Roles (one daily run)
-1. **Director:** picks next week's 35 topics from the plan, analytics and enemy roster; writes scripts with exact numbers; tags each video.
-2. **Animator:** renders every script with the studio engine.
+1. **Director:** picks the day's 5 posts (2 boss topics, 2 quick formats, 1 carousel) from the plan, analytics and enemy roster; writes scripts with exact numbers; tags each video.
+2. **Animator:** renders every script with the studio engine (videos with `quick.py` / boss template, carousels with `carousel.py`).
 3. **Reviewer:** independent check against the four checks and the rules above; looks at frame 0, the payoff frame and the end card.
 4. **Guide:** captions, hashtags, posting times, weekly package; every two weeks reads the platform exports and reports what to do more or less of.
 
 ## Tags per video (for analysis)
-id, date, platform, slot, format (boss/quiz/tip/want-need/reacts), world, enemy, hook type, length_s, end card, product mention (yes/no).
+id, date, platform, slot, format (boss/quiz/tip/want-need/reacts/rate/speedrun/patch-notes/carousel), world, enemy, hook type, length_s, end card, product mention (yes/no).
 
 ## Metrics that decide
 Swipe-away/skip rate (hook) · average % watched (story) · shares + saves per 1,000 views (value) · SCAN comments (funnel) · follows per 1,000 views (growth).

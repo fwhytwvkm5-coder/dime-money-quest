@@ -6,5 +6,6 @@
 - ManyChat keyword SCAN set up: NO
 - EUR 19 Money Quest sheet live: NO
 - Current phase: Launch (weeks 1-2)
+- Volume: 5 posts a day on Instagram (4 videos + 1 carousel), since 2026-11-15
 
 Update this file whenever one of these changes.
