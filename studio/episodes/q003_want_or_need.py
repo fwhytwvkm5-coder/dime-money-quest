@@ -3,13 +3,13 @@
 exec(open("/home/claude/dime-money-quest/studio/quick.py").read())
 
 NAME = "q003_want_or_need"
-DUR, T_CTA = 12.0, 10.7
+DUR, T_CTA = 12.0, 9.6   # comment end card needs ~2.4 s
 ITEMS = [("JACKET", 80, "NEED", "WINTER JACKET, €80. YOURS RIPPED."),
          ("SNEAKERS", 120, "WANT", "SNEAKERS, €120. PAIR NUMBER 4."),
          ("NEW PHONE", 900, "WANT", "NEW PHONE, €900. YOURS WORKS FINE.")]
-T_ITEM = [0.0, 2.1, 4.2]
-T_STAMP = [1.4, 3.5, 5.6]
-T_SUM, T_TIP = 6.4, 8.2
+T_ITEM = [0.0, 1.9, 3.8]
+T_STAMP = [1.3, 3.2, 5.1]
+T_SUM, T_TIP = 5.8, 7.4
 T_HIT = T_TIP
 DIALOG = [(T_ITEM[k], ITEMS[k][3]) for k in range(3)] + \
          [(T_SUM, "WANTS: €120 + €900 = €1,020. FINE, IF PLANNED."),
@@ -102,11 +102,11 @@ def frame(t):
     d = ImageDraw.Draw(im); d.fontmode = "1"
     whp = 0.9 - 0.06 * (t >= T_STAMP[1]) - 0.3 * (t >= T_STAMP[2]) + 0.25 * ease_out(prog(t, T_TIP + 0.3, T_TIP + 1.2))
     hud(d, t, whp, mood_at(t), tag="WANT OR NEED?")
-    headline(d, t, ["WANT", "OR", "NEED?"], [GOLD, WHITE, GREEN], y0=67, step=18, t_end=T_SUM)
+    headline(d, t, ["WANT", "OR", "NEED?"], [GOLD, WHITE, GREEN], y0=64, step=20, t_end=T_SUM)
     if t >= T_SUM and t < T_CTA:
         text(d, "WANT OR NEED?", 90, 70, WHITE, center=True)
     dialog_box(d, t, DIALOG, T_CTA)
     if t >= T_CTA: im = end_card(im, t, T_CTA)
     return post_fx(im, t, DUR, shakes=T_STAMP, white=[T_TIP])
 
-run_quick(NAME, frame, DUR, T_CTA, EVENTS, DIALOG, cover_t=0.3, music="quiz", check=(0, 50, 110, 175, 200, 260, 280, 330))
+run_quick(NAME, frame, DUR, T_CTA, EVENTS, DIALOG, cover_t=0.3, music="quiz", check=(0, 50, 110, 160, 190, 240, 288, 303, 350))

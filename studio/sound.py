@@ -4,7 +4,7 @@ episode_audio(...) writes a mono 44.1 kHz WAV that follows the episode beats:
 battle music under the attack, a sad half-time loop during the damage, a riser into
 the power-up, a victory theme after the counterattack and a level-complete jingle
 on the end card. Effects: title slams, punches, coin scatters, combo, damage womp,
-item-get, weapon hit (bonk, snip, ping, swat, ring or block), cash register, coin returns, typewriter blips.
+item-get, weapon hit (bonk, snip, ping, swat, ring, block, beam or lock), cash register, coin returns, typewriter blips.
 """
 import math, wave
 import numpy as np
@@ -107,7 +107,16 @@ def ring(vol=0.5):
 def block(vol=0.6):
     """shield block: metallic clang with a ringing tail"""
     return M(punch(vol * 0.8), sine(1480, 0.5, vol * 0.25, 7), sine(2210, 0.4, vol * 0.18, 9), sq(740, 0.08, vol * 0.12, 0.5, 25), noise(0.05, vol * 0.5, 70, hp=True))
-WEAPONS = {"bonk": None, "snip": None, "ping": ping, "swat": swat, "ring": ring, "block": block}
+def beam(vol=0.6):
+    """flashlight beam: rising zap sweep, buzzy hum, ghost-banish sparkle"""
+    return M(sq(220, 0.45, vol * 0.12, 0.25, 4, slide=880), sine(440, 0.5, vol * 0.25, 5, slide=1760),
+             noise(0.06, vol * 0.4, 60, hp=True), np.pad(shimmer(0.5, vol * 0.08), (int(0.12 * SR), 0)), punch(vol * 0.5))
+def lock(vol=0.6):
+    """vault lock: heavy clunk, then a two-step click"""
+    return M(punch(vol * 0.8), sine(110, 0.25, vol * 0.4, 12, slide=70),
+             np.pad(M(sq(2400, 0.02, vol * 0.2, 0.5, 80), noise(0.02, vol * 0.3, 90, hp=True)), (int(0.12 * SR), 0)),
+             np.pad(M(sq(1800, 0.03, vol * 0.2, 0.5, 60), noise(0.03, vol * 0.3, 80, hp=True)), (int(0.2 * SR), 0)))
+WEAPONS = {"bonk": None, "snip": None, "ping": ping, "swat": swat, "ring": ring, "block": block, "beam": beam, "lock": lock}
 def register(vol=0.25):
     return M(np.pad(M(sine(1568, 0.6, vol, 5), sine(2093, 0.6, vol * 0.7, 6)), (int(0.05 * SR), 0)), noise(0.04, vol, 60))
 def level_up(vol=0.1):

@@ -93,7 +93,7 @@ def s7(im, d):   # quest for today
     text(d, "TODAY'S QUEST", CW // 2, 26, MINT, center=True)
     y = title(d, "5 MINUTES", 40, GOLD)
     steps(d, ["OPEN YOUR BANK APP",
-              "SEARCH \"TRIAL\" AND YOUR LAST 3 MONTHS",
+              "SEARCH \"TRIAL\" IN YOUR LAST 3 MONTHS",
               "LIST EVERY ONE THAT RENEWS + ITS DATE",
               "CANCEL WHAT YOU DON'T USE"], y + 4)
 
