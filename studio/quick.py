@@ -123,7 +123,7 @@ def item_box(d, t, x, y, t_drop, t_grab, col=GREEN):
 
 def end_card(im, t, T_CTA, tease=None):
     p = prog(t, T_CTA, T_CTA + 0.3)
-    im = Image.blend(im, Image.new("RGB", (LW, LH), INK), 0.94 * p)
+    im = Image.blend(im, Image.new("RGB", (LW, LH), INK), 0.94 * p if p < 1 else 1.0)
     d = ImageDraw.Draw(im); d.fontmode = "1"
     if p < 1: return im
     hl = Image.new("RGBA", (40, 40), (0, 0, 0, 0)); hd = ImageDraw.Draw(hl)
