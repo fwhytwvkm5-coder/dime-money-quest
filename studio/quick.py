@@ -16,13 +16,15 @@ from PIL import Image, ImageDraw
 STUDIO = "/home/claude/dime-money-quest/studio"
 src = open(f"{STUDIO}/render_guy.py").read().split("\ndef frame(t):")[0]
 exec(src)
+exec(open(f"{STUDIO}/fx.py").read())   # v2 scenes, camera, moves (see fx.py)
 
 CTA_MODE = sys.argv[1] if len(sys.argv) > 1 else "more"
 COVER = len(sys.argv) > 2 and sys.argv[2] == "cover"     # covers never show a half-typed dialog box
 
 
-def scene(t, sky=5, sun=True):
-    """sky, stars, hills, city, ground. Returns (im, d)."""
+def scene(t, sky=5, sun=True, name=None):
+    """sky, stars, hills, city, ground. Returns (im, d). name= one of fx.SCENES uses the v2 scenes instead."""
+    if name: return paint_scene(name, t)
     top, bot = sky_colors(sky)
     im = Image.new("RGB", (LW, LH), top)
     d = ImageDraw.Draw(im); d.fontmode = "1"

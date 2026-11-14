@@ -32,6 +32,21 @@ Types (rotate; never the same type two days in a row):
 - **Want or need, swipe edition:** one item per slide, verdict + rarity.
 Rules: slide 1 = hook + "SWIPE"; "EXAMPLE NUMBERS" on every slide that shows an amount; one concrete action doable within 24 h; last slide = "Save this" + the end card from content/status.md + next-boss open loop; all text inside x 8–172 of the 180-px canvas; the four checks apply to the carousel as a whole.
 
+## Look v2 (since 2026-11-14): more motion, more variety
+- New boss fights start from `studio/template_boss_v2.py` (copy to `studio/episodes/epNNN_<slug>.py`, set NAME). Older v1 scripts can be upgraded with `studio/upgrade_v2.py`.
+- Scenes (`studio/fx.py`): city_night, sunset, snow, mall, apartment, synthwave, rain. Pick the one that fits the topic (shopping → mall, bills/home → apartment, bank/fees → rain, hooks that need to pop → synthwave, December → snow). Never the same scene in two reels in a row (check log.csv notes, which record the scene).
+- Quick formats use the same scenes: `scene(t, name="...")` in `studio/quick.py`.
+- Every boss fight has: camera punch-in on the cold open and the counterattack (world only, text never zoomed), Dime's dash at the boss, a spin on the power-up grab and the victory jump, dust, shockwave, confetti, and a dark plate behind the headline.
+- No words inside backgrounds (signs use pictograms) so nothing can be cut off at the edges.
+- Dialog lines wrap at 20 characters and the box shows 3 lines: keep every DIALOG line at 3 wrapped lines or fewer (check with `wrap(msg, 20)`).
+- Combo text, damage numbers and enemy labels must not touch each other; enemy price tags hide while that enemy lunges.
+
+## Dime's story (since 2026-11-15)
+Every boss fight is a step in Dime's own quest, shown in the quest panel during the payoff (story day, his monthly saving, months to his €3,000 safety net). Facts and the ledger live in `content/story.md`; update the ledger with every boss fight.
+
+## Timely bosses
+Dated bosses in ENEMIES.md ("Timely bosses") take slot A on their date (Black Friday week 23–28 Nov 2026, December to be planned).
+
 ## Boss-fight template
 | Time | Beat |
 | --- | --- |

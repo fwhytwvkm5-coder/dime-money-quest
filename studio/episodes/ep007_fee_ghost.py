@@ -8,6 +8,8 @@ from PIL import Image, ImageDraw
 src = open("/home/claude/dime-money-quest/studio/render_guy.py").read().split("\ndef frame(t):")[0]
 exec(src)
 
+exec(open("/home/claude/dime-money-quest/studio/fx.py").read())   # v2 visuals
+
 import sys
 CTA_MODE = sys.argv[1] if len(sys.argv) > 1 else 'more'
 DUR = 19.5
@@ -16,6 +18,13 @@ OUT = "/home/claude/dime-money-quest/studio/ep007_silent.mp4"
 HITS = [0.0, 0.56, 1.06]   # first hit lands on frame 0
 T_BOX, T_GRAB, T_WHACK, T_PAY, T_CTA = 6.3, 8.0, 8.6, 10.6, 14.0
 BAG_HOME = 128
+
+# ---- v2 look + Dime's story (content/story.md) ----
+SCENE = "rain"
+DAY, PLAN_BEFORE, PLAN_AFTER = 1, 50, 65
+DASH = (T_WHACK - 0.35, T_WHACK + 1.0, 17)
+SPINS = [(T_GRAB - 0.45, T_GRAB + 0.05), (T_PAY + 0.15, T_PAY + 0.75)]
+ZOOMS = [(0.0, 1.45, 1.22, 96, 205), (T_WHACK - 0.05, T_WHACK + 0.9, 1.35, 112, 205)]
 
 DIALOG = [(1.5, "ACCOUNT, CARD AND ATM FEES: €5 EACH..."),
           (3.6, "...€15 A MONTH IS €180 A YEAR. GONE."),
@@ -36,8 +45,9 @@ def knock(t):
 
 def guy_state(t):
     feet = GROUND_Y
-    x = GUY_X - int(knock(t))
-    for (j0, jd, hgt) in ((T_GRAB - 0.45, 0.5, 22), (T_PAY + 0.2, 0.35, 14), (T_PAY + 0.7, 0.35, 14)):
+    x = GUY_X - int(knock(t)) + dash_x(t, *DASH)
+    if any(0 <= t - h < 0.12 for h in HITS[-1:]): return x, feet, None, 6, "up", 1.0
+    for (j0, jd, hgt) in ((T_GRAB - 0.45, 0.5, 22), (T_PAY + 0.15, 0.6, 24), (T_PAY + 0.9, 0.35, 12)):
         if j0 <= t < j0 + jd:
             p = (t - j0) / jd
             return x, feet, None, int(hgt * 4 * p * (1 - p)), "up", 1.0
@@ -94,6 +104,7 @@ def big_monster(d, cx, by, col, s, t, k, attacking):
     d.ellipse([cx - 2, ey + 6, cx + 2, ey + 6 + mh], fill=INK)
     # fee tag on a string: each ghost bites €5
     tx, ty = cx, y0 + h + 9
+    if attacking: return y0 - 6          # the lunging ghost hides its tag so tags never overlap
     d.line([cx, y0 + h - 1, tx, ty - 4], fill=(150, 150, 170))
     d.rectangle([tx - 10, ty - 5, tx + 10, ty + 5], fill=INK)
     d.rectangle([tx - 9, ty - 4, tx + 9, ty + 4], fill=GOLD)
@@ -120,23 +131,7 @@ def draw_bag(d, t):
     return 130, min(top, 196)
 
 def frame(t):
-    top, bot = sky_colors(5)
-    im = Image.new("RGB", (LW, LH), top)
-    d = ImageDraw.Draw(im); d.fontmode = "1"
-    for y in range(34, GROUND_Y):
-        d.line([0, y, LW, y], fill=mixc(top, bot, (y - 34) / (GROUND_Y - 34)))
-    for (sx, sy) in STARS[:30]:
-        if int(t * 3 + sx) % 6: d.point((sx % LW, sy), fill=(255, 255, 220))
-    if t >= 1.5: d.ellipse([132, 60, 152, 80], fill=(255, 190, 120))
-    for (hx, hh) in HILLS[:6]:
-        x = int(hx * 0.6)
-        d.ellipse([x - 50, GROUND_Y - hh - 30, x + 50, GROUND_Y + 40], fill=mixc(bot, (40, 90, 80), 0.5))
-    for (bx, bw, bh, wins) in BUILD[:14]:
-        d.rectangle([bx, GROUND_Y - bh, bx + bw, GROUND_Y], fill=(55, 50, 95))
-        for (wx, wy) in wins: d.point((bx + wx, GROUND_Y - bh + wy), fill=(255, 210, 90))
-    for tx in range(0, LW + 12, 12):
-        d.rectangle([tx, GROUND_Y, tx + 11, GROUND_Y + 6], fill=GREEN); d.line([tx, GROUND_Y, tx + 11, GROUND_Y], fill=(160, 255, 180))
-        d.rectangle([tx, GROUND_Y + 7, tx + 11, LH], fill=(120, 74, 44)); d.point((tx + 3, GROUND_Y + 11), fill=(150, 100, 60))
+    im, d = paint_scene(SCENE, t)
 
     bx, by0 = draw_bag(d, t)
 
@@ -188,11 +183,18 @@ def frame(t):
         layer = Image.eval(layer, lambda v: v)  # keep, but tint red below
         r, g, b, a = layer.split()
         layer = Image.merge("RGBA", (r.point(lambda v: min(255, v + 120)), g.point(lambda v: v // 2), b.point(lambda v: v // 2), a))
+    layer = mirror_spin(layer, int(gx), t, SPINS)
     fx, fy = GUY_X, GROUND_Y + 1
-    spr = layer.crop((fx - 30, fy - 90, fx + 30, fy)).resize((120, 180), Image.NEAREST)
+    spr = layer.crop((fx - 30, fy - 90, fx + 50, fy)).resize((160, 180), Image.NEAREST)
     im.paste(spr, (fx - 60, fy - 180), spr)
     d = ImageDraw.Draw(im); d.fontmode = "1"
     hx = fx + (gx - fx) * 2; hcy = fy - (fy - ghcy) * 2
+    speed_lines(d, t, DASH[0], DASH[0] + 0.3, hx - 14, hcy + 40)
+    shockwave(d, t, T_WHACK, hx + 40, GROUND_Y - 20)
+    dust(d, t, T_GRAB + 0.05, hx); dust(d, t, T_PAY + 0.75, hx)
+    confetti(d, t, T_PAY + 0.15)
+    im = world_zoom(im, t, ZOOMS)
+    d = ImageDraw.Draw(im); d.fontmode = "1"
     # flashlight beam sweeping over the ghosts
     if T_WHACK - 0.1 <= t < T_WHACK + 0.7:
         bl = Image.new("RGBA", (LW, LH), (0, 0, 0, 0)); bd = ImageDraw.Draw(bl)
@@ -213,7 +215,7 @@ def frame(t):
         if 0 < p < 1:
             text(d, "-€5", hx - 10 + i * 6, hcy - 40 - int(20 * p), RED)
     if 1.06 <= t < 2.4 and int(t * 8) % 4:
-        text(d, "x3 COMBO!", 128, 150, GOLD, center=True)
+        text(d, "x3 COMBO!", 132, 136, GOLD, center=True)
     if T_WHACK <= t < T_WHACK + 1.4:
         p = prog(t, T_WHACK, T_WHACK + 0.15)
         text(d, "BUSTED!", 90, 150 - int(6 * p), WHITE, font=FONT_BIG, center=True)
@@ -222,6 +224,8 @@ def frame(t):
         if prog(t, 3.8, 3.9) >= 1 and (t > 4.3 or int(t * 10) % 2):
             text(d, "-€180", 90, 100, RED, font=FONT_BIG, center=True)
             text(d, "EVERY YEAR", 90, 122, WHITE, center=True)
+    if T_PAY + 0.7 <= t < T_CTA:
+        quest_bar(d, t, T_PAY + 0.7, DAY, PLAN_BEFORE, PLAN_AFTER)
     if T_PAY + 0.2 <= t < T_CTA:
         text(d, "+€180", 110, 96, GOLD, font=FONT_BIG, center=True)
         text(d, "A YEAR", 110, 118, WHITE, center=True)
@@ -243,6 +247,7 @@ def frame(t):
 
     # hook title slams in immediately
     if t < 1.5:
+        im = plate(im, 58, 128); d = ImageDraw.Draw(im); d.fontmode = "1"
         for k, ln in enumerate(["YOUR BANK", "IS EATING", "€180/YEAR"]):
             st = 0.0 + k * 0.1
             if t >= st:
@@ -252,7 +257,7 @@ def frame(t):
     # end card
     if t >= T_CTA:
         p = prog(t, T_CTA, T_CTA + 0.3)
-        im = Image.blend(im, Image.new("RGB", (LW, LH), INK), 0.94 * p)
+        im = Image.blend(im, Image.new("RGB", (LW, LH), INK), 0.94 * p if p < 1 else 1.0)
         d = ImageDraw.Draw(im); d.fontmode = "1"
         if p >= 1:
             # big Dime head, 3x, bouncing

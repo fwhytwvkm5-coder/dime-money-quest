@@ -23,3 +23,18 @@ World 3, Boss Fights: 21 Good vs. bad debt · 22 Credit card interest · 23 Mini
 World 4, Power-Ups: 31 Emergency fund · 32 How big · 33 Where to keep savings · 34 Autopilot · 35 The 1% challenge · 36 Quest map for a big goal · 37 No-spend weekend · 38 Groceries · 39 Selling unused stuff · 40 Cashback: power-up or trap
 
 World 5, Level Up: 41 Compound interest · 42 Starting at 20 vs. 30 · 43 Inflation · 44 What investing means · 45 Risk vs. reward · 46 What an index fund is (concept only) · 47 Asking for a raise · 48 Side income without upfront money · 49 Net worth as high score · 50 Year-end review
+
+## Timely bosses (take priority over the ordered list)
+When tomorrow's date has an entry here, slot A (18:00) uses it; slot B (21:00) takes the next unused topic from the list above.
+Each one is a full boss fight (v2 template) and also a story step for Dime (content/story.md). Mark it done in log.csv like any other topic.
+
+| Posting date | Enemy | Attack | Power-up / tip (one action within 24 h) | Scene |
+| --- | --- | --- | --- | --- |
+| 2026-11-23 (Mon) | Fake Discount Phantom | "Was €80, now €40" — but it cost €40 last month | Price-history check: screenshot today's price of everything on your list | mall |
+| 2026-11-24 (Tue) | Free-Shipping Goblin | Adds €18 to your cart to "save" €4.99 shipping | Pay the shipping or buy nothing extra: the math on screen | mall |
+| 2026-11-25 (Wed) | Countdown Clock Demon | "Ends in 09:59!" panic buys | Write your Black Friday list tonight; only list items get bought | synthwave |
+| 2026-11-26 (Thu) | Pay-Later Snake (topic 9) | 4 "small" payments that stack across shops | One rule: if you can't pay it today, you can't afford it this week | rain |
+| 2026-11-27 (Fri, Black Friday) | BLACK FRIDAY BOSS RUSH | the four above attack at once | Dime's list + budget cap for the day | mall |
+| 2026-11-28 (Sat) | Return Window Wraith | Regret buys you keep because returning is effort | Check the shop's return window today and send back what you don't need | apartment |
+
+December (plan before 2026-11-30 with the user): Gift Budget Golem (set one gift budget, divide by people), Party Season Swarm, "13th month" bonus trap, Year-End Review (topic 50) on 2026-12-31.
