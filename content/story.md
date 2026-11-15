@@ -25,3 +25,5 @@ on its own (check 1: stands alone).
 | --- | --- | --- | --- | --- | --- | --- |
 | 2026-11-15 | 1 | ep007 Fee Ghost | switched to a free account: +€15/month | 50 | 65 | 47 |
 | 2026-11-15 | 1 | ep008 Lifestyle Creep | raise +€400, auto-saves €200 of it | 65 | 265 | 12 |
+| 2026-11-16 | 2 | ep009 Drip Slimes | scanned 30 days, plugged 3 of 4 small leaks: +€30/month | 265 | 295 | 11 |
+| 2026-11-16 | 2 | ep010 Chaos Blobs | 3 jars, SAVE jar filled first on payday: +€50/month | 295 | 345 | 9 |
