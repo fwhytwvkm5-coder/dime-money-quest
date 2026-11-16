@@ -151,8 +151,14 @@ def end_card(im, t, T_CTA, tease=None):
             d.polygon([(136, 264), (144, 264), (136, 271)], fill=WHITE)
             for k in range(3): d.rectangle([138 + k * 9, 253, 140 + k * 9, 255], fill=INK)
             d.polygon([(124, 248), (124, 260), (116, 254)], fill=GOLD)
+        if t > T_CTA + 0.9:   # open loop (check 3): the next boss waits in the dark
+            text(d, "NEXT BOSS", 12, 280, (150, 255, 180))
+            for k in range(3):
+                mx = 98 + k * 14; my = 284
+                d.rectangle([mx - 5, my - 5, mx + 5, my + 5], fill=(70, 60, 100))
+                d.point((mx - 2, my - 1), fill=RED); d.point((mx + 2, my - 1), fill=RED)
         if t > T_CTA + 1.2 and int(t * 2) % 2:
-            text(d, "@DIMESMONEYQUEST", 90, 292, (200, 200, 220), center=True)
+            text(d, "@DIMESMONEYQUEST", 90, 298, (200, 200, 220), center=True)
         return im
     text(d, "FOLLOW", 90, 58, WHITE, font=FONT_BIG, center=True)
     if CTA_MODE == "follow":

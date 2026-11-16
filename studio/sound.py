@@ -122,7 +122,13 @@ def clink(vol=0.6):
              np.pad(M(sine(2637, 0.25, vol * 0.18, 14), sine(3951, 0.2, vol * 0.1, 18)), (int(0.09 * SR), 0)),
              np.pad(noise(0.06, vol * 0.25, 50, hp=True), (int(0.2 * SR), 0)),
              np.pad(coin(0.08, 1.1), (int(0.3 * SR), 0)), np.pad(coin(0.07, 1.25), (int(0.38 * SR), 0)))
-WEAPONS = {"bonk": None, "snip": None, "ping": ping, "swat": swat, "ring": ring, "block": block, "beam": beam, "lock": lock, "clink": clink}
+def transfer(vol=0.6):
+    """payday auto-transfer: calendar stamp, upward whoosh, three coins flying off to savings"""
+    return M(punch(vol * 0.7), noise(0.06, vol * 0.4, 45),
+             np.pad(sweep(0.25, vol * 0.4, up=True), (int(0.05 * SR), 0)),
+             np.pad(sq(880, 0.08, vol * 0.1, 0.25, 12, slide=1760), (int(0.1 * SR), 0)),
+             *[np.pad(coin(0.08, 1.0 + 0.15 * k), (int((0.22 + 0.07 * k) * SR), 0)) for k in range(3)])
+WEAPONS = {"bonk": None, "snip": None, "ping": ping, "swat": swat, "ring": ring, "block": block, "beam": beam, "lock": lock, "clink": clink, "transfer": transfer}
 def register(vol=0.25):
     return M(np.pad(M(sine(1568, 0.6, vol, 5), sine(2093, 0.6, vol * 0.7, 6)), (int(0.05 * SR), 0)), noise(0.04, vol, 60))
 def level_up(vol=0.1):
@@ -232,7 +238,7 @@ QUICK_FX = {
     "slam": lambda: slam(0.28), "womp": lambda: M(womp(), kick(0.5)), "item": lambda: M(item_get(), shimmer(0.9, 0.04)),
     "register": register, "tick": tick, "ding": lambda: M(ding(), shimmer(0.6, 0.04)), "buzz": buzz, "stamp": stamp,
     "poof": poof, "levelup": lambda: M(sweep(0.35, 0.2, up=False), np.pad(level_up(), (int(0.3 * SR), 0))),
-    "jump": jump, "bonk": bonk, "snip": snip, "ping": ping, "swat": swat, "ring": ring, "block": block, "clink": clink,
+    "jump": jump, "bonk": bonk, "snip": snip, "ping": ping, "swat": swat, "ring": ring, "block": block, "clink": clink, "transfer": transfer,
     "riser": lambda: M(sweep(0.8, 0.22, up=True), *[np.pad(sq(note("C4") * 2 ** (k / 4), 0.08, 0.05, 0.25, 6), (int(k * 0.1 * SR), 0)) for k in range(8)]),
 }
 
